@@ -116,7 +116,6 @@ library(wordcloud)
 ```{r Adding stop words}
 test_path <- "data/1-discrimination/test.csv"
 train_path <- "data/1-discrimination/train.csv"
-
 stop_words <- read_file("stop_words.txt")
 splitted_stop_words <- strsplit(stop_words, split = '\n')
 splitted_stop_words <- splitted_stop_words[[1]]
@@ -131,9 +130,7 @@ test <- read.csv(file = test_path, stringsAsFactors = FALSE)
 # note the power functional features of R bring us!
 tidy_text <- unnest_tokens(train, output = 'word', input = 'tweet') %>%
   filter(!word %in% splitted_stop_words)
-
 dataframe <- tidy_text %>% count(word, sort = TRUE)
-
 df_labels <- tidy_text %>% count(label, word, sort = TRUE)
 df_discrim <- df_labels %>% filter(label == "discrim")
 df_neutral <- df_labels %>% filter(label == "neutral")
@@ -145,7 +142,6 @@ Each time you work with some data, you need to understand it before you
 start processing it. R has very powerful tools to make nice plots and
 visualization. Show what are the most common words for negative and
 positive examples as a histogram, word cloud etc. Be creative!
-
 
 
 ### TODO - Visualize the most frequent words
@@ -176,7 +172,10 @@ colnames(df3) <- df_neutral_clean[, 1]
 terms_vec <- names(df3)
 wordcloud(terms_vec, df3, 
           max.words = 50, colors = "blue")
+
 ```
+
+
 
 ```{r Helping values}
 discrim_test = test %>% filter(label == "discrim") %>% count(label, tweet, result = 1)
@@ -188,11 +187,9 @@ is_neutral = 1 - is_discrim
 
 ```{r Class Definition}
 naiveBayes <- setRefClass("naiveBayes",
-
                           # d_test - for discrimination tweets
                           # n_test - for neutral tweets
                           fields = list(d_test = "data.frame", n_test = "data.frame"),
-
                           methods = list(
                             fit = function()
                             {
@@ -211,8 +208,6 @@ naiveBayes <- setRefClass("naiveBayes",
                               d_test <<- discrim_test
                               n_test <<- neutral_test
                             },
-
-
                             # returns prediction for a tweet
                             # 0 - discriminative, 1 - neutral
                             predict = function(tweet)
@@ -249,7 +244,6 @@ naiveBayes <- setRefClass("naiveBayes",
                                   return ((1+current_df["n"][pos, ])/divisor)
                               }
                             },
-
                             # score you test set so to get the understanding how well you model
                             # works.
                             # look at f1 score or precision and recall
@@ -262,28 +256,18 @@ naiveBayes <- setRefClass("naiveBayes",
                               neutral_f <- n_test[n_test$result == FALSE,]
                               neutral_f_amount <- nrow(neutral_f)
                               neutral_t_amount = nrow(n_test) - nrow(neutral_f)
-
                               dicrim_t <- d_test[d_test$result == TRUE,]
                               discrim_t_amount <- nrow(dicrim_t)
                               discrim_f_amount = nrow(d_test) - nrow(dicrim_t)
-
-
                               Precision <- neutral_t_amount / (neutral_t_amount +
                                 discrim_f_amount)
                               Recall <- neutral_t_amount / (neutral_f_amount+neutral_t_amount)
                               F1 <- 2 * (Precision * Recall / (Precision + Recall))
-
-
                               variants <- c(discrim_t_amount, neutral_t_amount, discrim_f_amount, neutral_f_amount)
                               par(mfrow = c(1, 2))
                               myPalette <- brewer.pal(5, "Set2")
-
-
                             pie(variants, labels=c("Predicted correct discrim ", "Predicted correct neutral",
                                                     "Predicted incorrect discrim", "Predicted correct neutral"), border="white", col=myPalette )
-
-
-
                               metrics <- c(Precision, Recall, F1)
                               barplot(
                                 metrics,
@@ -296,11 +280,9 @@ naiveBayes <- setRefClass("naiveBayes",
                                 horiz = FALSE)
                             }
                           ))
-
 model = naiveBayes()
 model$fit()
 model$score()
-
 ```
 
 ## Measure effectiveness of your classifier
