@@ -211,7 +211,14 @@ naiveBayes <- setRefClass("naiveBayes",
                             },
                             # calculates the probability for a single word
                             calc_probability = function(word, current_df) {
-                             
+                              pos <- which(current_df["word"] == word)
+                              divisor <- nrow(current_df) + nrow(df)
+                              if (length(pos) == 0){
+                                  return(1/divisor)
+                              }
+                              else {
+                                  return ((1+current_df["n"][pos, ])/divisor)
+                              }
                             },
 
                             # score you test set so to get the understanding how well you model
