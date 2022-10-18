@@ -63,6 +63,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(wordcloud)
 ```
 
 ## Instructions
@@ -146,8 +147,36 @@ visualization. Show what are the most common words for negative and
 positive examples as a histogram, word cloud etc. Be creative!
 
 
+
 ### TODO - Visualize the most frequent words
 
+```{r Visualization }
+#discriminatory word cloud
+df_discrim_clean <- df_discrim_v
+df_discrim_clean[1] <- NULL
+
+
+df2 <- data.frame(t(df_discrim_clean[-1]))
+colnames(df2) <- df_discrim_clean[, 1]
+
+# Vector of terms
+terms_vec <- names(df2)
+
+# Create a wordcloud for the values in word_freqs
+wordcloud(terms_vec, df2, 
+          max.words = 50, colors = "red")
+
+#neutral word cloud
+df_neutral_clean <- df_neutral_v
+df_neutral_clean[1] <- NULL
+
+df3 <- data.frame(t(df_neutral_clean[-1]))
+colnames(df3) <- df_neutral_clean[, 1]
+
+terms_vec <- names(df3)
+wordcloud(terms_vec, df3, 
+          max.words = 50, colors = "blue")
+```
 
 ```{r Helping values}
 discrim_test = test %>% filter(label == "discrim") %>% count(label, tweet, result = 1)
